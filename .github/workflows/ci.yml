@@ -29,6 +29,9 @@ jobs:
         working-directory: backend
         run: npm install
 
+      - name: Debug Environment Variables
+        run: echo "MONGO_URI=${{ secrets.MONGO_URI }}"
+
       - name: Run Tests (Backend)
         working-directory: backend
         env:
