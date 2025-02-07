@@ -14,7 +14,7 @@ const extractData = (xmlData) => {
     const { INProfileResponse } = xmlData;
     const basic = INProfileResponse.Current_Application.Current_Application_Details.Current_Applicant_Details;
     const summary = INProfileResponse.CAIS_Account.CAIS_Summary;
-    const creditAccounts = INProfileResponse.CAIS_Account.CAIS_Account_DETAILS;
+    const creditAccounts = Array.isArray(INProfileResponse.CAIS_Account.CAIS_Account_DETAILS)? INProfileResponse.CAIS_Account.CAIS_Account_DETAILS: [INProfileResponse.CAIS_Account.CAIS_Account_DETAILS];
     const score = INProfileResponse.SCORE;
 
     const panNumbers = [];
@@ -71,7 +71,7 @@ const extractData = (xmlData) => {
     return {
       ...basicDetails,
       reportSummary,
-      creditAccounts: processAccounts(accounts)
+      creditAccounts: processAccounts(creditAccounts)
     };
   } catch (err) {
     logger.error('Data extraction error:', err);
