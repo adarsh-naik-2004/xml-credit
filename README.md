@@ -4,22 +4,25 @@
 This project is a **Full-Stack MERN application** that allows users to upload XML files, parse their content, and store the extracted data in a **MongoDB** database. The frontend provides a user-friendly interface to upload and visualize the structured XML data.
 
 ## 📽️ Video Demo  
-![Video Demo](https://img.youtube.com/vi/your_video_id/maxresdefault.jpg)  
+[Video Demo](https://drive.google.com/file/d/1ysbBiJl2iwu_5StDHonflvA51SE9o4A3/view?usp=sharing)  
 
 
 
 
 ## 🛠️ Tech Stack  
-- **Frontend:** React, Tailwind CSS (or any UI framework)  
+- **Frontend:** React, Tailwind CSS
 - **Backend:** Node.js, Express.js  
-- **Database:** MongoDB  
-- **Parsing Library:** xml2js (for converting XML to JSON)  
+- **Database:** MongoDB
+- **Testing:** Jest
+- **Parsing Library:** xml2js (for converting XML to JSON)
+- **Deployment:** Vercel
 
 ## 🚀 Features  
-✔️ Upload XML files via the web interface  
+✔️ Upload XML files via user-friendly web interface  
 ✔️ Parse XML data and store it in MongoDB  
 ✔️ View, search, and filter parsed data  
 ✔️ REST API for fetching XML data  
+✔️ Responsive UI
 
 ## 📦 Setup & Installation & Tests
 
@@ -64,7 +67,8 @@ This project is a **Full-Stack MERN application** that allows users to upload XM
 
 ## 🛠️ API Endpoints  
 
-| Method | Endpoint  | Description             |
-|--------|----------|-------------------------|
-| POST   | `/upload` | Upload & parse XML file |
-| GET    | `/data`   | Retrieve parsed XML data |
+| Method | Endpoint         | Description                         |
+|--------|-----------------|-------------------------------------|
+| **POST**   | `/api/reports`      | Upload & parse an XML file, store extracted data in MongoDB |
+| **GET**    | `/api/reports`      | Retrieve all parsed XML reports from the database |
+| **GET**    | `/api/reports/:id`  | Retrieve a specific report by its ID |
