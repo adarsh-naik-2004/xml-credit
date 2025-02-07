@@ -8,13 +8,13 @@ require('dotenv').config();
 
 const app = express();
 
-// Connect Database
-connectDB();
-
 // Middlewares
 app.use(cors({ origin: "*" }));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // Add limit for JSON payloads
 app.use(morgan('dev'));
+
+// Connect Database
+connectDB();
 
 // Routes
 app.use('/api/reports', reportRoutes);
@@ -22,10 +22,5 @@ app.use('/api/reports', reportRoutes);
 // Error Handler
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
-
-const server = app.listen(PORT, () => 
-  console.log(`Server running on port ${PORT}`)
-);
-
+// Export for Vercel
 module.exports = app;
