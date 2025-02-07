@@ -60,7 +60,7 @@ This project is a **Full-Stack MERN application** that allows users to upload XM
 2. Run the tests::
    ```sh
    npm test
-![Test Results](.frontend/src/assets/tests.jpg)
+![Test Results](frontend/src/assets/tests.jpg)
 
 ## 🛠️ API Endpoints  
 
