@@ -32,7 +32,7 @@ export default function UploadPage() {
 
     try {
       setLoading(true);
-      const res = await axios.post("http://localhost:5000/api/reports", formData);
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/reports`, formData);
       navigate(`/reports/${res.data._id}`);
     } catch (err) {
       setError("Failed to upload file. Please try again.");
