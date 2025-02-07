@@ -29,7 +29,6 @@ export default function UploadPage() {
 
     const formData = new FormData();
     formData.append("xmlFile", file);
-
     try {
       setLoading(true);
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/reports`, formData);

@@ -9,9 +9,9 @@ import ReportDetails from './pages/ReportDetails';
 export default function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen bg-gradient-to-b from-fuchsia-200 via-white to-white">
         <Navbar />
-        <main className="container mx-auto p-4">
+        <main className="container mx-auto ">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/upload" element={<UploadPage />} />
