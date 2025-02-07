@@ -7,7 +7,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const winston = require('winston');
 const fs = require('fs');
-
+const path = require('path');
 const app = express();
 app.use(cors({ origin: "*" }));
 app.use(express.json());
@@ -64,7 +64,7 @@ const parseXML = xml => new Promise((resolve, reject) => {
 
 // Multer configuration for file upload
 const upload = multer({
-    dest: 'uploads/',
+    dest: '/tmp/uploads',
     fileFilter: (req, file, cb) => {
       if (file.mimetype === 'text/xml' || file.mimetype === 'application/xml') {
         cb(null, true);
@@ -210,9 +210,11 @@ app.get('/api/reports/:id', async (req, res) => {
   }
 });
 
+module.exports = app;
+
 // Database Connection
 const PORT = process.env.PORT || 5000;
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/creditsea')
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     app.listen(PORT, () => 
       console.log(`Server running on port ${PORT}`));
