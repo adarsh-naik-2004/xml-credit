@@ -18,16 +18,23 @@ const extractData = (xmlData) => {
     const score = INProfileResponse.SCORE;
 
     const panNumbers = [];
-    const accounts = Array.isArray(creditAccounts) ? creditAccounts : [creditAccounts];
-    
-    accounts.forEach(account => {
-      const details = account.CAIS_Holder_ID_Details;
-      if (Array.isArray(details)) {
-        details.forEach(d => panNumbers.push(d.Income_TAX_PAN));
-      } else {
-        panNumbers.push(details?.Income_TAX_PAN);
-      }
+    if (Array.isArray(INProfileResponse.CAIS_Account.CAIS_Account_DETAILS)) {
+        INProfileResponse.CAIS_Account.CAIS_Account_DETAILS.forEach(account => {
+        if (Array.isArray(account.CAIS_Holder_ID_Details)) {
+            account.CAIS_Holder_ID_Details.forEach(detail => panNumbers.push(detail.Income_TAX_PAN));
+        } else {
+            panNumbers.push(account.CAIS_Holder_ID_Details.Income_TAX_PAN);
+        }
     });
+    } else {
+        const singleAccount = INProfileResponse.CAIS_Account.CAIS_Account_DETAILS;
+        if (Array.isArray(singleAccount.CAIS_Holder_ID_Details)) {
+        singleAccount.CAIS_Holder_ID_Details.forEach(detail => panNumbers.push(detail.Income_TAX_PAN));
+        } else {
+        panNumbers.push(singleAccount.CAIS_Holder_ID_Details.Income_TAX_PAN);
+        }
+    }
+
 
     const basicDetails = {
       name: `${basic.First_Name || ''} ${basic.Last_Name || ''}`.trim(),

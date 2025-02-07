@@ -5,7 +5,10 @@ const logger = require('../config/logger');
 exports.uploadReport = async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-    
+    if (req.file.mimetype !== 'text/xml' && req.file.mimetype !== 'application/xml') {
+        return res.status(400).json({ error: 'Invalid file type' });
+    }
+  
     const xml = req.file.buffer.toString('utf8');
     const xmlData = await parseXML(xml);
     const reportData = extractData(xmlData);
