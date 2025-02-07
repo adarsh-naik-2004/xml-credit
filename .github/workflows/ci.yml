@@ -4,21 +4,13 @@ on:
   push:
     branches:
       - main
-      - develop
   pull_request:
     branches:
       - main
-      - develop
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
-
-    services:
-      mongo:
-        image: mongo:latest
-        ports:
-          - 27017:27017
 
     steps:
       - name: Checkout Repository
@@ -29,8 +21,14 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install Dependencies
+      - name: Install Dependencies (Frontend)
+        working-directory: frontend
         run: npm install
 
-      - name: Run Tests
+      - name: Install Dependencies (Backend)
+        working-directory: backend
+        run: npm install
+
+      - name: Run Tests (Backend)
+        working-directory: backend
         run: npm test
