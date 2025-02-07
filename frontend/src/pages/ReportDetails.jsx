@@ -102,7 +102,6 @@ export default function ReportDetails() {
       </h1>
 
       <div className="space-y-8">
-        {/* Basic Details Section */}
         <Section 
           title="Basic Information" 
           icon={<UserRound className="w-5 h-5 text-indigo-600" />}
@@ -137,7 +136,6 @@ export default function ReportDetails() {
           </div>
         </Section>
 
-        {/* Financial Overview Section */}
         <Section 
           title="Report Summary" 
           icon={<Landmark className="w-5 h-5 text-green-600" />}
@@ -194,7 +192,6 @@ export default function ReportDetails() {
           </div>
         </Section>
 
-        {/* Credit Accounts Section */}
         <Section 
           title="Credit Accounts Information" 
           icon={<CreditCard className="w-5 h-5 text-violet-600" />}
@@ -270,7 +267,6 @@ export default function ReportDetails() {
           bgColor="bg-white"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Active vs Closed Accounts Pie Chart */}
             <div className="bg-white p-4 rounded-xl shadow-md">
               <h3 className="text-lg font-semibold mb-4 text-gray-700">Account Status Distribution</h3>
               <div className="h-64">
@@ -297,8 +293,6 @@ export default function ReportDetails() {
                 </ResponsiveContainer>
               </div>
             </div>
-
-            {/* Overdue vs Balance Pie Chart */}
             <div className="bg-white p-4 rounded-xl shadow-md">
               <h3 className="text-lg font-semibold mb-4 text-gray-700">Amount Distribution</h3>
               <div className="h-64">
@@ -332,7 +326,7 @@ export default function ReportDetails() {
   )
 }
 
-// Helper Components
+
 function Section({ title, icon, children, bgColor = "bg-white" }) {
   return (
     <div className={`${bgColor} rounded-2xl shadow-lg overflow-hidden`}>
@@ -430,7 +424,6 @@ function ErrorMessage({ message }) {
   )
 }
 
-// Utility function
 function formatNumber(number) {
   return Number(number || 0).toLocaleString('en-IN')
 }

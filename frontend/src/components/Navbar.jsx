@@ -19,7 +19,6 @@ export default function Navbar() {
             to="/"
             className="flex items-center gap-3 transform hover:scale-105 transition-transform duration-200"
           >
-            {/* Replace with your actual logo path */}
            
             <div className="flex flex-col leading-tight">
               <span className="text-2xl sm:text-3xl font-extrabold text-white 

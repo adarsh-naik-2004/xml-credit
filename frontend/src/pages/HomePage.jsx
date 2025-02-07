@@ -12,16 +12,13 @@ export default function HomePage() {
   return (
     <main className="bg-gradient-to-b from-fuchsia-300 via-white to-white">
       <section className="relative overflow-hidden min-h-[calc(100vh-4rem)] flex items-center">
-        {/* Background Elements */}
         <div className="absolute inset-0 z-0">
           <div className="absolute top-20 left-0 w-72 h-72 bg-blue-200 rounded-full filter blur-3xl opacity-20 animate-pulse"></div>
           <div className="absolute top-40 right-0 w-72 h-72 bg-indigo-200 rounded-full filter blur-3xl opacity-20 animate-pulse"></div>
         </div>
 
-        {/* Main Content */}
         <div className="relative z-10 container mx-auto">
           <div className="max-w-4xl mx-auto text-center">
-            {/* Hero Text */}
             <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-8 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
               Streamline Your Credit Reports
             </h1>
@@ -30,7 +27,6 @@ export default function HomePage() {
               <span className="block">Fast, secure, and effortless.</span>
             </p>
 
-            {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row justify-center gap-6 mb-20">
               <Button to="/upload" primary>
                 <UploadCloud size={20} />
@@ -43,7 +39,6 @@ export default function HomePage() {
               </Button>
             </div>
 
-            {/* Trust Indicators */}
             <div className="flex flex-wrap justify-center gap-8">
               <TrustIndicator
                 icon={<CheckCircle className="text-green-500" size={20} />}

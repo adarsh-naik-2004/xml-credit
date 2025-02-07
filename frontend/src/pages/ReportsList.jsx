@@ -41,7 +41,7 @@ export default function ReportsList() {
     return (matchesName || matchesPAN) && matchesMin && matchesMax
   })
 
-  // Pagination logic
+
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
   const currentItems = filteredReports.slice(indexOfFirstItem, indexOfLastItem)

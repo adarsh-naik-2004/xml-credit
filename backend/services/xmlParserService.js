@@ -13,13 +13,12 @@ const extractData = (xmlData) => {
     try {
       const { INProfileResponse } = xmlData;
       
-      // Safe navigation with defaults
       const basic = INProfileResponse?.Current_Application?.Current_Application_Details?.Current_Applicant_Details || {};
       const summary = INProfileResponse?.CAIS_Account?.CAIS_Summary || {};
       const creditAccounts = INProfileResponse?.CAIS_Account?.CAIS_Account_DETAILS || [];
       const score = INProfileResponse?.SCORE || {};
   
-      // Handle PAN extraction safely
+ 
       const panNumbers = [];
       const accounts = Array.isArray(creditAccounts) ? creditAccounts : [creditAccounts];
       
@@ -32,7 +31,6 @@ const extractData = (xmlData) => {
         }
       });
   
-      // Basic details with defaults
       const basicDetails = {
         name: `${basic?.First_Name || ''} ${basic?.Last_Name || ''}`.trim(),
         mobile: basic?.MobilePhoneNumber || 'N/A',
@@ -40,7 +38,7 @@ const extractData = (xmlData) => {
         creditScore: parseInt(score?.BureauScore) || 0
       };
   
-      // Report summary with defaults
+
       const reportSummary = {
         totalAccounts: parseInt(summary?.Credit_Account?.CreditAccountTotal) || 0,
         activeAccounts: parseInt(summary?.Credit_Account?.CreditAccountActive) || 0,
@@ -51,7 +49,7 @@ const extractData = (xmlData) => {
         last7DaysEnquiries: parseInt(INProfileResponse?.TotalCAPS_Summary?.TotalCAPSLast7Days) || 0
       };
   
-      // Process accounts safely
+
       const processAccounts = (accounts) => {
         return accounts.map(acc => ({
           creditCard: acc?.Account_Type || 'N/A',

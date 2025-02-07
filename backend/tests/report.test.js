@@ -2,10 +2,10 @@ const request = require("supertest");
 const fs = require("fs");
 const path = require("path");
 const mongoose = require("mongoose");
-const app = require("../server"); // Make sure path is correct
+const app = require("../server"); 
 
 describe("Report API Tests", () => {
-  // Test XML file setup
+
   const mockXML = `
   <INProfileResponse>
     <Current_Application>
@@ -31,13 +31,11 @@ describe("Report API Tests", () => {
   `;
 
   beforeAll(async () => {
-    // Create temp XML file
     if (!fs.existsSync("./__mocks__")) fs.mkdirSync("./__mocks__");
     fs.writeFileSync("./__mocks__/test.xml", mockXML);
   });
 
   afterAll(async () => {
-    // Cleanup
     if (fs.existsSync("./__mocks__")) fs.rmSync("./__mocks__", { recursive: true });
     await mongoose.connection.close();
   });
@@ -56,7 +54,7 @@ describe("Report API Tests", () => {
       
       expect(res.statusCode).toBe(201);
       expect(res.body).toHaveProperty("name", "John Doe");
-    }, 10000); // Increased timeout
+    }, 10000); 
   });
 
   describe("History Tests", () => {
