@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
@@ -7,12 +6,13 @@ const cors = require('cors');
 const morgan = require('morgan');
 const winston = require('winston');
 const fs = require('fs');
-const path = require('path');
+
 const app = express();
+
+
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(morgan('dev'));
-
 require('dotenv').config();
 
 // Logger configuration
@@ -24,6 +24,22 @@ const logger = winston.createLogger({
     new winston.transports.File({ filename: 'combined.log' }),
   ],
 });
+
+
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === 'text/xml' || file.mimetype === 'application/xml') {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only XML files are allowed.'));
+    }
+  }
+});
+
+
+
 
 // MongoDB Schema
 const reportSchema = new mongoose.Schema({
@@ -53,6 +69,7 @@ const reportSchema = new mongoose.Schema({
 
 const Report = mongoose.model('Report', reportSchema);
 
+
 // XML Parser Middleware
 const parseXML = xml => new Promise((resolve, reject) => {
   const parser = new xml2js.Parser({ explicitArray: false });
@@ -62,17 +79,7 @@ const parseXML = xml => new Promise((resolve, reject) => {
   });
 });
 
-// Multer configuration for file upload
-const upload = multer({
-    dest: '/tmp/uploads',
-    fileFilter: (req, file, cb) => {
-      if (file.mimetype === 'text/xml' || file.mimetype === 'application/xml') {
-        cb(null, true);
-      } else {
-        cb(new Error('Invalid file type. Only XML files are allowed.'));
-      }
-    }
-  });
+
   
 
 // Helper function to extract data from XML
@@ -151,12 +158,6 @@ const extractData = (xmlData) => {
 };
 
 
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, 'dist')));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-    });
-  }
   
   // Add this error handler middleware after your routes
   app.use((err, req, res, next) => {
@@ -170,18 +171,15 @@ if (process.env.NODE_ENV === 'production') {
 app.post('/api/reports', upload.single('xmlFile'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-    if (req.file.mimetype !== 'text/xml') {
-      fs.unlinkSync(req.file.path);
+    if (req.file.mimetype !== 'text/xml' && req.file.mimetype !== 'application/xml') {
       return res.status(400).json({ error: 'Invalid file type' });
     }
 
-    const xml = fs.readFileSync(req.file.path, 'utf8');
+    const xml = req.file.buffer.toString('utf8');
     const xmlData = await parseXML(xml);
     const reportData = extractData(xmlData);
     
     const newReport = await Report.create(reportData);
-    fs.unlinkSync(req.file.path); // Cleanup uploaded file
-    
     res.status(201).json(newReport);
   } catch (err) {
     logger.error('Upload error:', err);
@@ -210,16 +208,18 @@ app.get('/api/reports/:id', async (req, res) => {
   }
 });
 
-module.exports = app;
-
 // Database Connection
-const PORT = process.env.PORT || 5000;
+
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
-    app.listen(PORT, () => 
-      console.log(`Server running on port ${PORT}`));
+    const port = process.env.PORT
+    app.listen(port, () => 
+      console.log(`Server running on port ${port}`));
   })
   .catch(err => {
     logger.error('DB connection failed:', err);
     process.exit(1);
   });
+
+
+module.exports = app;
