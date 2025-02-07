@@ -18,7 +18,7 @@ export default function ReportDetails() {
   useEffect(() => {
     const fetchReport = async () => {
       try {
-        const res = await axios.get(`/api/reports/${id}`)
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/reports/${id}`)
         setReport(res.data)
       } catch (err) {
         setError("Report not found")

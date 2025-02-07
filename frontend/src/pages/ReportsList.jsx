@@ -23,7 +23,7 @@ export default function ReportsList() {
   useEffect(() => {
     const fetchReports = async () => {
       try {
-        const res = await axios.get("/api/reports")
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/reports`)
         setReports(res.data)
       } catch (err) {
         setError("Failed to load reports")
