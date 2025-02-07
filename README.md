@@ -10,7 +10,7 @@ This project is a **Full-Stack MERN application** that allows users to upload XM
 
 
 ## 🛠️ Tech Stack  
-- **Frontend:** React, Tailwind CSS
+- **Frontend:** React.js
 - **Backend:** Node.js, Express.js  
 - **Database:** MongoDB
 - **Testing:** Jest
