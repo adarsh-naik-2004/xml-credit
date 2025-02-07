@@ -12,6 +12,7 @@ exports.uploadReport = async (req, res) => {
 
     const xml = req.file.buffer.toString("utf8");
     const xmlData = await parseXML(xml);
+    console.log("Parsed XML Data:", JSON.stringify(xmlData, null, 2));
     const reportData = extractData(xmlData);
 
     const newReport = await Report.create(reportData);
