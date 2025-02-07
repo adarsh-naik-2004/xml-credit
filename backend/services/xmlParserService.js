@@ -10,73 +10,72 @@ const parseXML = xml => new Promise((resolve, reject) => {
 });
 
 const extractData = (xmlData) => {
-  try {
-    const { INProfileResponse } = xmlData;
-    const basic = INProfileResponse.Current_Application.Current_Application_Details.Current_Applicant_Details;
-    const summary = INProfileResponse.CAIS_Account.CAIS_Summary;
-    const creditAccounts = Array.isArray(INProfileResponse.CAIS_Account.CAIS_Account_DETAILS)? INProfileResponse.CAIS_Account.CAIS_Account_DETAILS: [INProfileResponse.CAIS_Account.CAIS_Account_DETAILS];
-    const score = INProfileResponse.SCORE;
-
-    const panNumbers = [];
-    if (Array.isArray(INProfileResponse.CAIS_Account.CAIS_Account_DETAILS)) {
-        INProfileResponse.CAIS_Account.CAIS_Account_DETAILS.forEach(account => {
-        if (Array.isArray(account.CAIS_Holder_ID_Details)) {
-            account.CAIS_Holder_ID_Details.forEach(detail => panNumbers.push(detail.Income_TAX_PAN));
+    try {
+      const { INProfileResponse } = xmlData;
+      
+      // Safe navigation with defaults
+      const basic = INProfileResponse?.Current_Application?.Current_Application_Details?.Current_Applicant_Details || {};
+      const summary = INProfileResponse?.CAIS_Account?.CAIS_Summary || {};
+      const creditAccounts = INProfileResponse?.CAIS_Account?.CAIS_Account_DETAILS || [];
+      const score = INProfileResponse?.SCORE || {};
+  
+      // Handle PAN extraction safely
+      const panNumbers = [];
+      const accounts = Array.isArray(creditAccounts) ? creditAccounts : [creditAccounts];
+      
+      accounts.forEach(account => {
+        const details = account?.CAIS_Holder_ID_Details || {};
+        if (Array.isArray(details)) {
+          details.forEach(d => panNumbers.push(d?.Income_TAX_PAN));
         } else {
-            panNumbers.push(account.CAIS_Holder_ID_Details.Income_TAX_PAN);
+          panNumbers.push(details?.Income_TAX_PAN);
         }
-    });
-    } else {
-        const singleAccount = INProfileResponse.CAIS_Account.CAIS_Account_DETAILS;
-        if (Array.isArray(singleAccount.CAIS_Holder_ID_Details)) {
-        singleAccount.CAIS_Holder_ID_Details.forEach(detail => panNumbers.push(detail.Income_TAX_PAN));
-        } else {
-        panNumbers.push(singleAccount.CAIS_Holder_ID_Details.Income_TAX_PAN);
-        }
+      });
+  
+      // Basic details with defaults
+      const basicDetails = {
+        name: `${basic?.First_Name || ''} ${basic?.Last_Name || ''}`.trim(),
+        mobile: basic?.MobilePhoneNumber || 'N/A',
+        pan: panNumbers[0] || 'N/A',
+        creditScore: parseInt(score?.BureauScore) || 0
+      };
+  
+      // Report summary with defaults
+      const reportSummary = {
+        totalAccounts: parseInt(summary?.Credit_Account?.CreditAccountTotal) || 0,
+        activeAccounts: parseInt(summary?.Credit_Account?.CreditAccountActive) || 0,
+        closedAccounts: parseInt(summary?.Credit_Account?.CreditAccountClosed) || 0,
+        currentBalance: parseInt(summary?.Total_Outstanding_Balance?.Outstanding_Balance_All) || 0,
+        securedAmount: parseInt(summary?.Total_Outstanding_Balance?.Outstanding_Balance_Secured) || 0,
+        unsecuredAmount: parseInt(summary?.Total_Outstanding_Balance?.Outstanding_Balance_UnSecured) || 0,
+        last7DaysEnquiries: parseInt(INProfileResponse?.TotalCAPS_Summary?.TotalCAPSLast7Days) || 0
+      };
+  
+      // Process accounts safely
+      const processAccounts = (accounts) => {
+        return accounts.map(acc => ({
+          creditCard: acc?.Account_Type || 'N/A',
+          bank: acc?.Subscriber_Name?.trim() || 'N/A',
+          address: [
+            acc?.CAIS_Holder_Address_Details?.First_Line_Of_Address_non_normalized,
+            acc?.CAIS_Holder_Address_Details?.Second_Line_Of_Address_non_normalized,
+            acc?.CAIS_Holder_Address_Details?.City_non_normalized
+          ].filter(Boolean).join(', ') || 'N/A',
+          accountNumber: acc?.Account_Number || 'N/A',
+          amountOverdue: parseInt(acc?.Amount_Past_Due) || 0,
+          currentBalance: parseInt(acc?.Current_Balance) || 0
+        }));
+      };
+  
+      return {
+        ...basicDetails,
+        reportSummary,
+        creditAccounts: processAccounts(creditAccounts)
+      };
+    } catch (err) {
+      logger.error('Data extraction error:', err);
+      throw new Error('Invalid XML structure: ' + err.message);
     }
-
-
-    const basicDetails = {
-      name: `${basic.First_Name || ''} ${basic.Last_Name || ''}`.trim(),
-      mobile: basic.MobilePhoneNumber,
-      pan: panNumbers[0],
-      creditScore: parseInt(score.BureauScore)
-    };
-
-    const reportSummary = {
-      totalAccounts: summary.Credit_Account.CreditAccountTotal,
-      activeAccounts: summary.Credit_Account.CreditAccountActive,
-      closedAccounts: summary.Credit_Account.CreditAccountClosed,
-      currentBalance: summary.Total_Outstanding_Balance.Outstanding_Balance_All,
-      securedAmount: summary.Total_Outstanding_Balance.Outstanding_Balance_Secured,
-      unsecuredAmount: summary.Total_Outstanding_Balance.Outstanding_Balance_UnSecured,
-      last7DaysEnquiries: INProfileResponse.TotalCAPS_Summary.TotalCAPSLast7Days
-    };
-
-    const processAccounts = (accounts) => {
-      return accounts.map(acc => ({
-        creditCard: acc.Account_Type,
-        bank: acc.Subscriber_Name?.trim(),
-        address: [
-          acc.CAIS_Holder_Address_Details?.First_Line_Of_Address_non_normalized,
-          acc.CAIS_Holder_Address_Details?.Second_Line_Of_Address_non_normalized,
-          acc.CAIS_Holder_Address_Details?.City_non_normalized
-        ].filter(Boolean).join(', '),
-        accountNumber: acc.Account_Number,
-        amountOverdue: parseInt(acc.Amount_Past_Due) || 0,
-        currentBalance: parseInt(acc.Current_Balance) || 0
-      }));
-    };
-
-    return {
-      ...basicDetails,
-      reportSummary,
-      creditAccounts: processAccounts(creditAccounts)
-    };
-  } catch (err) {
-    logger.error('Data extraction error:', err);
-    throw new Error('Invalid XML structure');
-  }
-};
+  };
 
 module.exports = { parseXML, extractData };

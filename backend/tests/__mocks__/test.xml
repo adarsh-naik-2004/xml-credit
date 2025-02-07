@@ -1,0 +1,42 @@
+<!-- __mocks__/test.xml -->
+<INProfileResponse>
+  <Current_Application>
+    <Current_Application_Details>
+      <Current_Applicant_Details>
+        <First_Name>John</First_Name>
+        <Last_Name>Doe</Last_Name>
+        <MobilePhoneNumber>1234567890</MobilePhoneNumber>
+      </Current_Applicant_Details>
+    </Current_Application_Details>
+  </Current_Application>
+  <SCORE>
+    <BureauScore>750</BureauScore>
+  </SCORE>
+  <CAIS_Account>
+    <CAIS_Summary>
+      <Credit_Account>
+        <CreditAccountTotal>5</CreditAccountTotal>
+        <CreditAccountActive>3</CreditAccountActive>
+        <CreditAccountClosed>2</CreditAccountClosed>
+      </Credit_Account>
+      <Total_Outstanding_Balance>
+        <Outstanding_Balance_All>100000</Outstanding_Balance_All>
+        <Outstanding_Balance_Secured>50000</Outstanding_Balance_Secured>
+        <Outstanding_Balance_UnSecured>50000</Outstanding_Balance_UnSecured>
+      </Total_Outstanding_Balance>
+    </CAIS_Summary>
+    <CAIS_Account_DETAILS>
+      <CAIS_Holder_ID_Details>
+        <Income_TAX_PAN>ABCDE1234F</Income_TAX_PAN>
+      </CAIS_Holder_ID_Details>
+      <Account_Type>Credit Card</Account_Type>
+      <Subscriber_Name>Test Bank</Subscriber_Name>
+      <Account_Number>123456789</Account_Number>
+      <Amount_Past_Due>5000</Amount_Past_Due>
+      <Current_Balance>15000</Current_Balance>
+    </CAIS_Account_DETAILS>
+  </CAIS_Account>
+  <TotalCAPS_Summary>
+    <TotalCAPSLast7Days>2</TotalCAPSLast7Days>
+  </TotalCAPS_Summary>
+</INProfileResponse>

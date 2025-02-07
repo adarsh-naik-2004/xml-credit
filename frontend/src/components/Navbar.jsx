@@ -20,11 +20,7 @@ export default function Navbar() {
             className="flex items-center gap-3 transform hover:scale-105 transition-transform duration-200"
           >
             {/* Replace with your actual logo path */}
-            <img 
-              src="../../creditsea_logo__1_-removebg-preview.png" 
-              alt="CreditSea Logo" 
-              className="h-10 w-10 rounded-full object-cover"
-            />
+           
             <div className="flex flex-col leading-tight">
               <span className="text-2xl sm:text-3xl font-extrabold text-white 
                 bg-clip-text text-transparent bg-gradient-to-r 
