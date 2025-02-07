@@ -10,6 +10,54 @@ import {
   TrendingUp, TrendingDown, Minus, ShieldCheck, ShieldAlert
 } from 'lucide-react'
 
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+
+
+const CHART_COLORS = {
+  active: ['#3b82f6', '#60a5fa', '#93c5fd'],
+  closed: ['#ef4444', '#f87171', '#fca5a5'],
+  overdue: ['#f59e0b', '#fbbf24', '#fcd34d'],
+  balance: ['#10b981', '#34d399', '#6ee7b7']
+};
+
+const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const x = cx + radius * Math.cos(-midAngle * Math.PI / 180);
+  const y = cy + radius * Math.sin(-midAngle * Math.PI / 180);
+
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="white"
+      textAnchor={x > cx ? 'start' : 'end'}
+      dominantBaseline="central"
+      className="text-sm font-semibold drop-shadow-sm"
+    >
+      {`${(percent * 100).toFixed(0)}%`}
+    </text>
+  );
+};
+
+
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-3 rounded-lg shadow-md border border-gray-100">
+        <p className="font-semibold text-gray-700 flex items-center gap-2">
+          <span 
+            className="w-3 h-3 rounded-full" 
+            style={{ backgroundColor: payload[0].payload.fill }}
+          />
+          {payload[0].name}: ₹{formatNumber(payload[0].value)}
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
+
 export default function ReportDetails() {
   const { id } = useParams()
   const [report, setReport] = useState(null)
@@ -32,6 +80,9 @@ export default function ReportDetails() {
 
   if (loading) return <LoadingSpinner />
   if (error) return <ErrorMessage message={error} />
+
+  const totalOverdue = report?.creditAccounts?.reduce((sum, acc) => sum + (acc.amountOverdue || 0), 0) || 0;
+
 
   return (
     <div className="container mx-auto p-6 bg-gradient-to-br from-indigo-50 via-white to-white min-h-screen">
@@ -88,7 +139,7 @@ export default function ReportDetails() {
 
         {/* Financial Overview Section */}
         <Section 
-          title="Financial Overview" 
+          title="Report Summary" 
           icon={<Landmark className="w-5 h-5 text-green-600" />}
           bgColor="bg-white"
         >
@@ -145,7 +196,7 @@ export default function ReportDetails() {
 
         {/* Credit Accounts Section */}
         <Section 
-          title="Credit Accounts" 
+          title="Credit Accounts Information" 
           icon={<CreditCard className="w-5 h-5 text-violet-600" />}
           bgColor="bg-white"
         >
@@ -211,6 +262,69 @@ export default function ReportDetails() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </Section>
+        <Section 
+          title="Charts" 
+          icon={<BarChart className="w-5 h-5 text-indigo-600" />}
+          bgColor="bg-white"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Active vs Closed Accounts Pie Chart */}
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="text-lg font-semibold mb-4 text-gray-700">Account Status Distribution</h3>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Active', value: report.reportSummary?.activeAccounts || 0 },
+                        { name: 'Closed', value: report.reportSummary?.closedAccounts || 0 }
+                      ]}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={80}
+                      label
+                    >
+                      <Cell fill="#4CAF50" />
+                      <Cell fill="#F44336" />
+                    </Pie>
+                    <Tooltip formatter={(value) => `${value} accounts`} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Overdue vs Balance Pie Chart */}
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h3 className="text-lg font-semibold mb-4 text-gray-700">Amount Distribution</h3>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Overdue', value: totalOverdue },
+                        { name: 'Balance', value: report.reportSummary?.currentBalance || 0 }
+                      ]}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={80}
+                      label
+                    >
+                      <Cell fill="#F44336" />
+                      <Cell fill="#4CAF50" />
+                    </Pie>
+                    <Tooltip formatter={(value) => `₹${formatNumber(value)}`} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
         </Section>
       </div>
